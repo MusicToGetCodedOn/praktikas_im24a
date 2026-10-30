@@ -1,0 +1,38 @@
+{
+  "rank": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7"
+  ],
+  "name": [
+    "Loris Pérez",
+    "Mykyta Pantelei",
+    "Noel Kohn",
+    "Jana Jenni",
+    "Nilton Barroso",
+    "Etienne Schwab",
+    "Richard Eberhardt"
+  ],
+  "firma": [
+    "Universitäres Psychiatrisches Zentrum Bern",
+    "Berner Fachhochschule",
+    "VZ Zürich",
+    "Inselgruppe AG",
+    "Schweizerischer Blinden- und Sehbehindertenverband",
+    "BEGASOFT AG",
+    "Ericsson AG"
+  ],
+  "link": [
+    "https://lpdigital.ch/",
+    "https://mykyta-pantelei.planary.ch/",
+    "https://noelkohn.ch/",
+    "https://janajenni.ch/",
+    "https://niltonbc.ch/",
+    "https://etienneschwab.ch/",
+    "https://www.richardeberhardt.ch/"
+  ]
+}
