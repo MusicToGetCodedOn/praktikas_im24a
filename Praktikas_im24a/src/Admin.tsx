@@ -34,6 +34,7 @@ async function callAdmin(body: { password: string; entries?: Entry[] }) {
 
 export default function Admin() {
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [rows, setRows] = useState<Row[] | null>(null);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<Status>(null);
@@ -98,17 +99,33 @@ export default function Admin() {
 
           {rows === null ? (
             <form className="login" onSubmit={login}>
-              <label className="fld">
-                <span>Passwort</span>
-                <input
-                  type="password"
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  autoFocus
-                />
-              </label>
+              <div className="fld">
+                <label htmlFor="pw">Passwort</label>
+                <span className="pw">
+                  <input
+                    id="pw"
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    className="ic"
+                    onClick={() => setShowPassword((s) => !s)}
+                    aria-label={showPassword ? 'Passwort verbergen' : 'Passwort anzeigen'}
+                    aria-pressed={showPassword}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
+                      <circle cx="12" cy="12" r="3" />
+                      {showPassword && <path d="M4 4l16 16" />}
+                    </svg>
+                  </button>
+                </span>
+              </div>
               <button className="btn" disabled={busy}>
                 {busy ? 'Prüfe …' : 'Anmelden'}
               </button>

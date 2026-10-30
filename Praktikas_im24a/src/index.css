@@ -70,10 +70,13 @@ body{margin:0;background:#0b0b0f}
 .adm{--d0:0s;min-height:calc(100vh - 28px)}
 .adm .logo{text-decoration:none}
 .fld{display:grid;gap:6px;min-width:0}
-.fld span{font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--t2)}
+.fld>span:not(.pw),.fld>label{font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--t2)}
 .fld input{font:inherit;color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--rule);border-radius:0;padding:8px 0;min-height:44px;width:100%;transition:border-color 120ms var(--ease)}
 .fld input:hover{border-color:var(--t2)}
 .fld input:focus{outline:none;border-color:var(--ink)}
+.pw{display:flex;align-items:center;gap:4px}
+.pw .ic{color:var(--t2)}
+.pw .ic:hover{color:var(--ink)}
 .login{display:flex;align-items:end;gap:24px;max-width:520px}
 .login .fld{flex:1}
 .btn{font:inherit;font-weight:600;min-height:44px;padding:0 24px;border:1px solid var(--ink);border-radius:999px;background:var(--ink);color:var(--paper);cursor:pointer;transition:background-color 120ms var(--ease),border-color 120ms var(--ease)}
