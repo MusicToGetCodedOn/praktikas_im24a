@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Mark, MarkMasks } from './Mark';
+import PasswordField from './PasswordField';
 
 interface Entry {
   name: string;
@@ -98,17 +99,7 @@ export default function Admin() {
 
           {rows === null ? (
             <form className="login" onSubmit={login}>
-              <label className="fld">
-                <span>Passwort</span>
-                <input
-                  type="password"
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  autoFocus
-                />
-              </label>
+              <PasswordField value={password} onChange={setPassword} />
               <button className="btn" disabled={busy}>
                 {busy ? 'Prüfe …' : 'Anmelden'}
               </button>
