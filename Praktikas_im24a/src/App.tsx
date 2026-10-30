@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type RefObject } from 'react';
 import tableData from './data.json';
 import { Mark, MarkMasks } from './Mark';
+import PasswordField from './PasswordField';
 
 interface TableData {
   rank: string[];
@@ -161,17 +162,7 @@ function AccessGate({ onUnlock }: { onUnlock: () => void }) {
             </h1>
           </div>
           <form className="login" onSubmit={submit}>
-            <label className="fld">
-              <span>Passwort</span>
-              <input
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                autoFocus
-              />
-            </label>
+            <PasswordField value={password} onChange={setPassword} />
             <button className="btn" disabled={busy}>
               {busy ? 'Prüfe …' : 'Öffnen'}
             </button>
