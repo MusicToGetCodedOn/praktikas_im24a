@@ -1,5 +1,17 @@
 # React + TypeScript + Vite
 
+## Zugangsdaten
+
+Die beiden Bereiche verwenden getrennte Passwörter. In den Vercel Project Settings
+unter **Environment Variables** müssen diese serverseitig gesetzt werden:
+
+- `SITE_PASSWORD`: Passwort zum Öffnen der öffentlichen Rangliste
+- `ADMIN_PASSWORD`: Passwort für `/admin`
+
+Die Passwörter werden nicht in den Quellcode eingetragen. Nach dem Ändern der
+Variablen ist ein neuer Vercel-Deploy nötig. Der Zugang zur Rangliste bleibt pro
+Browser-Tab bis zum Schließen des Tabs freigeschaltet.
+
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
 Currently, two official plugins are available:

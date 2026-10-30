@@ -1,4 +1,4 @@
-import { useEffect, useRef, type CSSProperties, type RefObject } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type RefObject } from 'react';
 import tableData from './data.json';
 import { Mark, MarkMasks } from './Mark';
 
@@ -49,8 +49,13 @@ function useReveal(root: RefObject<HTMLDivElement | null>) {
 }
 
 export default function App() {
+  const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem('site-access') === 'granted');
   const app = useRef<HTMLDivElement>(null);
   useReveal(app);
+
+  if (!unlocked) {
+    return <AccessGate onUnlock={() => setUnlocked(true)} />;
+  }
 
   return (
     <div className="pl" id="app" ref={app}>
@@ -108,6 +113,70 @@ export default function App() {
               </tbody>
             </table>
           </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function AccessGate({ onUnlock }: { onUnlock: () => void }) {
+  const [password, setPassword] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
+  async function submit(e: FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError('');
+    try {
+      const response = await fetch('/api/access', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+      const body = (await response.json().catch(() => ({}))) as { error?: string };
+      if (!response.ok) throw new Error(body.error ?? 'Server nicht erreichbar.');
+      sessionStorage.setItem('site-access', 'granted');
+      onUnlock();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="pl">
+      <MarkMasks />
+      <div className="site adm">
+        <div className="top">
+          <span className="logo" role="img" aria-label="Logo">
+            <Mark />
+          </span>
+        </div>
+        <section className="list" aria-labelledby="access-heading">
+          <div className="head">
+            <h1 id="access-heading" className="d">
+              <span className="lift">Zugang</span>
+            </h1>
+          </div>
+          <form className="login" onSubmit={submit}>
+            <label className="fld">
+              <span>Passwort</span>
+              <input
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoFocus
+              />
+            </label>
+            <button className="btn" disabled={busy}>
+              {busy ? 'Prüfe …' : 'Öffnen'}
+            </button>
+          </form>
+          {error && <p className="msg err" role="alert">{error}</p>}
         </section>
       </div>
     </div>
