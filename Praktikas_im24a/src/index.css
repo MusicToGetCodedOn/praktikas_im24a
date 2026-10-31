@@ -51,7 +51,7 @@ body{margin:0;background:#0b0b0f}
 .c-firm{width:28%}
 .rk{display:inline-block;overflow:hidden;font:300 44px/1 var(--disp);letter-spacing:-.07em;padding-left:8px}
 /* stagger: --i is the row index, set inline */
-.rk span{display:inline-block;animation:up 900ms var(--ease) calc(var(--d0) + 120ms + var(--i,0) * 60ms) both}
+.rk span{display:inline-block;padding-right:.1em;animation:up 900ms var(--ease) calc(var(--d0) + 120ms + var(--i,0) * 60ms) both}
 .nm{font-size:17px;font-weight:600}
 .fm{font-size:15px;color:var(--t2)}
 .pf{display:inline-flex;white-space:nowrap;align-items:center;gap:14px;min-height:44px;text-decoration:none;font-weight:500}
@@ -86,7 +86,7 @@ body{margin:0;background:#0b0b0f}
 .btn:disabled{opacity:.5;cursor:default}
 .ed{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
 .ed li{display:grid;grid-template-columns:64px minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.2fr) auto;gap:24px;align-items:end;padding:18px 0;border-bottom:1px solid var(--rule)}
-.ed .rk{font-size:32px;padding:0 0 6px;align-self:end}
+.ed .rk{font-size:32px;padding:0 .1em 6px 0;align-self:end}
 .acts{display:flex;gap:4px}
 .ic{width:44px;height:44px;border-radius:50%;border:0;background:transparent;color:var(--ink);font:500 16px/1 var(--body);cursor:pointer;transition:background-color 120ms linear}
 .ic:hover:not(:disabled){background:var(--card)}
