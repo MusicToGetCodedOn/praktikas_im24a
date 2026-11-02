@@ -6,8 +6,7 @@
     "4",
     "5",
     "6",
-    "7",
-    "8"
+    "7"
   ],
   "name": [
     "Loris Pérez",
@@ -16,8 +15,7 @@
     "Jana Jenni",
     "Nilton Barroso",
     "Etienne Schwab",
-    "Richard Eberhardt",
-    "test"
+    "Richard Eberhardt"
   ],
   "firma": [
     "Universitäres Psychiatrisches Zentrum Bern",
@@ -26,8 +24,7 @@
     "Inselgruppe AG",
     "Schweizerischer Blinden- und Sehbehindertenverband",
     "BEGASOFT AG",
-    "Ericsson AG",
-    "ttt"
+    "Ericsson AG"
   ],
   "link": [
     "https://lpdigital.ch/",
@@ -36,7 +33,6 @@
     "https://janajenni.ch/",
     "https://niltonbc.ch/",
     "https://etienneschwab.ch/",
-    "https://www.richardeberhardt.ch/",
-    "https://sbb.ch"
+    "https://www.richardeberhardt.ch/"
   ]
 }
