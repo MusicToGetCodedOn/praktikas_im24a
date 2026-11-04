@@ -1,4 +1,5 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
+import { recordVisit } from './_visits.js';
 
 // Vercel function behind the admin panel. The list lives in src/data.json in
 // the repo: a save commits that file and Vercel redeploys the site.
@@ -103,6 +104,7 @@ export async function POST(request: Request) {
   }
 
   if (!passwordOk(body.password)) {
+    await recordVisit(request, 'fail', '/admin');
     return Response.json({ error: 'Falsches Passwort.' }, { status: 401 });
   }
   if (!process.env.GITHUB_TOKEN) {
@@ -114,6 +116,7 @@ export async function POST(request: Request) {
 
     // Login: no list sent, hand back the current one from the repo.
     if (body.entries === undefined) {
+      await recordVisit(request, 'admin', '/admin');
       return Response.json({ entries: current.entries });
     }
 
