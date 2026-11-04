@@ -1,5 +1,6 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
-import { readVisits, storeReady } from './_visits.js';
+import { STORE_MISSING, storeReady } from './_redis.js';
+import { readVisits } from './_visits.js';
 
 // Visitor log for the "Besucher" tab in the admin panel.
 
@@ -23,10 +24,7 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Falsches Passwort.' }, { status: 401 });
   }
   if (!storeReady()) {
-    return Response.json(
-      { error: 'Kein Speicher verbunden. In Vercel unter Storage eine Upstash-Redis-Datenbank mit dem Projekt verbinden und neu deployen.' },
-      { status: 503 },
-    );
+    return Response.json({ error: STORE_MISSING }, { status: 503 });
   }
 
   try {

@@ -1,16 +1,26 @@
 import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type RefObject } from 'react';
-import tableData from './data.json';
 import { Mark, MarkMasks } from './Mark';
 import PasswordField from './PasswordField';
 
-interface TableData {
-  rank: string[];
-  name: string[];
-  firma: string[];
-  link: string[];
+interface Entry {
+  name: string;
+  firma: string;
+  link: string;
 }
 
-const data: TableData = tableData;
+// The list only comes from /api/access after the password check. It is kept
+// for this browser tab so a reload does not ask again.
+const STORE_KEY = 'site-data';
+
+function storedEntries(): Entry[] | null {
+  try {
+    const raw = sessionStorage.getItem(STORE_KEY);
+    const parsed: unknown = raw ? JSON.parse(raw) : null;
+    return Array.isArray(parsed) ? (parsed as Entry[]) : null;
+  } catch {
+    return null;
+  }
+}
 
 // "https://www.richardeberhardt.ch/" → "richardeberhardt.ch"
 function displayUrl(url: string) {
@@ -50,12 +60,12 @@ function useReveal(root: RefObject<HTMLDivElement | null>) {
 }
 
 export default function App() {
-  const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem('site-access') === 'granted');
+  const [entries, setEntries] = useState<Entry[] | null>(storedEntries);
   const app = useRef<HTMLDivElement>(null);
   useReveal(app);
 
-  if (!unlocked) {
-    return <AccessGate onUnlock={() => setUnlocked(true)} />;
+  if (!entries) {
+    return <AccessGate onUnlock={setEntries} />;
   }
 
   return (
@@ -90,18 +100,18 @@ export default function App() {
                 </tr>
               </thead>
               <tbody>
-                {data.rank.map((rank, i) => (
-                  <tr key={rank}>
+                {entries.map((e, i) => (
+                  <tr key={i}>
                     <td className="c-rank">
                       <span className="rk">
-                        <span style={{ '--i': i } as CSSProperties}>{rank.padStart(2, '0')}</span>
+                        <span style={{ '--i': i } as CSSProperties}>{String(i + 1).padStart(2, '0')}</span>
                       </span>
                     </td>
-                    <td className="nm">{data.name[i]}</td>
-                    <td className="fm">{data.firma[i]}</td>
+                    <td className="nm">{e.name}</td>
+                    <td className="fm">{e.firma}</td>
                     <td>
-                      <a className="pf" href={data.link[i]} target="_blank" rel="noopener">
-                        <span className="u">{displayUrl(data.link[i])}</span>
+                      <a className="pf" href={e.link} target="_blank" rel="noopener">
+                        <span className="u">{displayUrl(e.link)}</span>
                         <span className="rnd" aria-hidden="true">
                           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
                             <path d="M4 10L10 4M5 4h5v5" />
@@ -120,7 +130,7 @@ export default function App() {
   );
 }
 
-function AccessGate({ onUnlock }: { onUnlock: () => void }) {
+function AccessGate({ onUnlock }: { onUnlock: (entries: Entry[]) => void }) {
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -136,10 +146,14 @@ function AccessGate({ onUnlock }: { onUnlock: () => void }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password }),
       });
-      const body = (await response.json().catch(() => ({}))) as { error?: string };
-      if (!response.ok) throw new Error(body.error ?? 'Server nicht erreichbar.');
-      sessionStorage.setItem('site-access', 'granted');
-      onUnlock();
+      const body = (await response.json().catch(() => ({}))) as { entries?: Entry[]; error?: string };
+      if (!response.ok || !body.entries) throw new Error(body.error ?? 'Server nicht erreichbar.');
+      try {
+        sessionStorage.setItem(STORE_KEY, JSON.stringify(body.entries));
+      } catch {
+        // storage blocked: still show the list for this page view
+      }
+      onUnlock(body.entries);
     } catch (err) {
       setError((err as Error).message);
       setShake(true);

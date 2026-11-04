@@ -12,16 +12,35 @@ Die Passwörter werden nicht in den Quellcode eingetragen. Nach dem Ändern der
 Variablen ist ein neuer Vercel-Deploy nötig. Der Zugang zur Rangliste bleibt pro
 Browser-Tab bis zum Schließen des Tabs freigeschaltet.
 
-## Besucher-Statistik
+## Speicher (Upstash Redis)
 
-Im Admin-Panel zeigt der Tab **Besucher** Aufrufe, Entsperrungen, Fehlversuche,
-Orte, Geräte, Browser und Herkunft. Gespeichert wird in einer Upstash-Redis-Datenbank:
+Rangliste und Besucher-Statistik liegen in einer Upstash-Redis-Datenbank, nicht im Repo:
 
 1. In Vercel unter **Storage → Marketplace** „Upstash for Redis“ anlegen (Free-Plan reicht)
    und mit diesem Projekt verbinden. Vercel setzt `KV_REST_API_URL` und `KV_REST_API_TOKEN`.
 2. Neu deployen.
 
-Ohne diese Variablen wird nichts aufgezeichnet. IP-Adressen werden nicht gespeichert,
+Ohne Redis lassen sich weder die Rangliste noch das Admin-Panel öffnen.
+
+## Rangliste
+
+Die Rangliste steht absichtlich nicht im Repo, denn das Repo ist öffentlich. Die Seite
+bekommt sie erst von `/api/access`, nachdem das Passwort stimmt. Im Admin-Panel
+gespeicherte Änderungen sind sofort online, ohne neuen Deploy.
+
+Beim ersten Aufruf mit leerer Datenbank wird die frühere `src/data.json` einmalig aus
+der Git-Historie übernommen. Ein `GITHUB_TOKEN` ist dafür nicht mehr nötig.
+
+Achtung: Ältere Versionen der Liste sind weiterhin in der Git-Historie dieses Repos
+lesbar. Wer das verhindern will, muss das Repo auf privat stellen oder die Historie
+bereinigen.
+
+## Besucher-Statistik
+
+Im Admin-Panel zeigt der Tab **Besucher** Aufrufe, Entsperrungen, Fehlversuche,
+Orte, Geräte, Browser und Herkunft.
+
+Ohne Redis wird nichts aufgezeichnet. IP-Adressen werden nicht gespeichert,
 nur ein kurzer Hash aus IP und Browser, damit dasselbe Gerät wiedererkannt wird.
 Es werden die letzten 5000 Ereignisse behalten.
 

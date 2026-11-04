@@ -1,13 +1,11 @@
 import { createHash } from 'node:crypto';
+import { redis, storeReady } from './_redis.js';
 
 // Visitor log for the stats tab in the admin panel. The underscore keeps Vercel
 // from turning this file into its own endpoint.
 //
-// Stored as a Redis list in Upstash (Vercel → Storage → Marketplace → Upstash
-// for Redis, connect it to this project). Vercel then sets the env vars:
-//   KV_REST_API_URL / KV_REST_API_TOKEN
-//   (UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN work too)
-// Without them nothing is recorded and /api/stats says so.
+// Stored as a Redis list in Upstash (see api/_redis.ts). Without Redis nothing
+// is recorded and /api/stats says so.
 //
 // No raw IP address is stored: a visitor is a short hash of IP + browser, so the
 // same device shows up under the same id without the address itself being kept.
@@ -29,26 +27,6 @@ export interface Visit {
   os: string;
   d: string; // Handy | Tablet | Computer
   r: string; // referrer host, '' = direct
-}
-
-function redisEnv() {
-  const url = process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN;
-  return url && token ? { url, token } : null;
-}
-
-export const storeReady = () => redisEnv() !== null;
-
-async function redis(commands: (string | number)[][]) {
-  const env = redisEnv();
-  if (!env) throw new Error('Redis ist nicht eingerichtet.');
-  const res = await fetch(`${env.url}/pipeline`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${env.token}` },
-    body: JSON.stringify(commands),
-  });
-  if (!res.ok) throw new Error(`Redis ${res.status}`);
-  return (await res.json()) as { result?: unknown; error?: string }[];
 }
 
 function browser(ua: string) {
@@ -117,7 +95,6 @@ export async function recordVisit(request: Request, e: VisitType, p = '', r = ''
 
 // Newest first.
 export async function readVisits(): Promise<Visit[]> {
-  const [res] = await redis([['LRANGE', KEY, 0, MAX_EVENTS - 1]]);
-  if (res.error) throw new Error(res.error);
-  return (res.result as string[]).map((s) => JSON.parse(s) as Visit);
+  const [list] = await redis([['LRANGE', KEY, 0, MAX_EVENTS - 1]]);
+  return (list as string[]).map((s) => JSON.parse(s) as Visit);
 }
