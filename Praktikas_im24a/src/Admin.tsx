@@ -62,7 +62,7 @@ export default function Admin() {
     try {
       const entries = rows.map(({ name, firma, link }) => ({ name, firma, link }));
       setRows(toRows(await callAdmin({ password, entries })));
-      setStatus({ kind: 'ok', text: 'Gespeichert. Die Seite ist in etwa einer Minute aktualisiert.' });
+      setStatus({ kind: 'ok', text: 'Gespeichert. Die Rangliste ist sofort aktualisiert.' });
     } catch (err) {
       setStatus({ kind: 'err', text: (err as Error).message });
     } finally {

@@ -1,5 +1,10 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
+import { getRanking } from './_ranking.js';
+import { STORE_MISSING, storeReady } from './_redis.js';
 import { recordVisit } from './_visits.js';
+
+// Password gate of the public page. The ranking is only handed out here, after
+// the password check, so it is not readable from the repo or the site bundle.
 
 function passwordOk(given: unknown) {
   const expected = process.env.SITE_PASSWORD;
@@ -21,7 +26,16 @@ export async function POST(request: Request) {
     await recordVisit(request, 'fail', '/');
     return Response.json({ error: 'Falsches Passwort.' }, { status: 401 });
   }
+  if (!storeReady()) {
+    return Response.json({ error: STORE_MISSING }, { status: 503 });
+  }
 
-  await recordVisit(request, 'unlock', '/');
-  return Response.json({ ok: true });
+  try {
+    const entries = await getRanking();
+    await recordVisit(request, 'unlock', '/');
+    return Response.json({ entries });
+  } catch (err) {
+    console.error(err);
+    return Response.json({ error: 'Rangliste konnte nicht geladen werden.' }, { status: 502 });
+  }
 }
