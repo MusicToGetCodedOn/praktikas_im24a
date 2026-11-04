@@ -12,7 +12,7 @@ import { recordVisit } from './_visits.js';
 
 const REPO = process.env.GITHUB_REPO ?? 'MusicToGetCodedOn/praktikas_im24a';
 const BRANCH = process.env.GITHUB_BRANCH ?? 'main';
-const FILE = 'src/data.json';
+const FILE = 'Praktikas_im24a/src/data.json';
 const MAX_ENTRIES = 100;
 const MAX_LEN = 200;
 
