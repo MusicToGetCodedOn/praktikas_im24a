@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Mark, MarkMasks } from './Mark';
 import PasswordField from './PasswordField';
+import Stats from './Stats';
 
 interface Entry {
   name: string;
@@ -38,6 +39,7 @@ export default function Admin() {
   const [rows, setRows] = useState<Row[] | null>(null);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<Status>(null);
+  const [tab, setTab] = useState<'list' | 'stats'>('list');
 
   async function login(e: FormEvent) {
     e.preventDefault();
@@ -105,6 +107,19 @@ export default function Admin() {
               </button>
             </form>
           ) : (
+            <div className="tabs" role="tablist" aria-label="Bereich">
+              <button type="button" role="tab" aria-selected={tab === 'list'} onClick={() => setTab('list')}>
+                Rangliste
+              </button>
+              <button type="button" role="tab" aria-selected={tab === 'stats'} onClick={() => setTab('stats')}>
+                Besucher
+              </button>
+            </div>
+          )}
+
+          {rows !== null && tab === 'stats' && <Stats password={password} />}
+
+          {rows !== null && tab === 'list' && (
             <form onSubmit={save}>
               <ol className="ed">
                 {rows.map((r, i) => (
@@ -139,7 +154,7 @@ export default function Admin() {
             </form>
           )}
 
-          {status && (
+          {status && tab === 'list' && (
             <p className={`msg ${status.kind}`} role={status.kind === 'err' ? 'alert' : 'status'}>
               {status.text}
             </p>

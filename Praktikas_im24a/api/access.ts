@@ -1,4 +1,5 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
+import { recordVisit } from './_visits.js';
 
 function passwordOk(given: unknown) {
   const expected = process.env.SITE_PASSWORD;
@@ -17,8 +18,10 @@ export async function POST(request: Request) {
   }
 
   if (!passwordOk(body.password)) {
+    await recordVisit(request, 'fail', '/');
     return Response.json({ error: 'Falsches Passwort.' }, { status: 401 });
   }
 
+  await recordVisit(request, 'unlock', '/');
   return Response.json({ ok: true });
 }

@@ -12,6 +12,19 @@ Die Passwörter werden nicht in den Quellcode eingetragen. Nach dem Ändern der
 Variablen ist ein neuer Vercel-Deploy nötig. Der Zugang zur Rangliste bleibt pro
 Browser-Tab bis zum Schließen des Tabs freigeschaltet.
 
+## Besucher-Statistik
+
+Im Admin-Panel zeigt der Tab **Besucher** Aufrufe, Entsperrungen, Fehlversuche,
+Orte, Geräte, Browser und Herkunft. Gespeichert wird in einer Upstash-Redis-Datenbank:
+
+1. In Vercel unter **Storage → Marketplace** „Upstash for Redis“ anlegen (Free-Plan reicht)
+   und mit diesem Projekt verbinden. Vercel setzt `KV_REST_API_URL` und `KV_REST_API_TOKEN`.
+2. Neu deployen.
+
+Ohne diese Variablen wird nichts aufgezeichnet. IP-Adressen werden nicht gespeichert,
+nur ein kurzer Hash aus IP und Browser, damit dasselbe Gerät wiedererkannt wird.
+Es werden die letzten 5000 Ereignisse behalten.
+
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
 Currently, two official plugins are available:
